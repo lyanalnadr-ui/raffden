@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشويات الرافدين</title>
+    <!-- Import Arabic Google Font (Tajawal) matching Figma UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #555843; /* Olive / earthy green tone from design */
+            --card-bg: #FAF8F5;
+            --accent-color: #4A4D3B;
+            --text-dark: #222222;
+            --text-light: #777777;
+            --price-bg: #6B6E59;
+            --btn-dark: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding-bottom: 90px;
+        }
+
+header {
+  position: relative;
+  text-align: center;
+  padding: 40px 15px; /* زودنا المسافة فوق وتحت عشان تعطي مساحة للصورة */
+  background-image: url('images/35.jpeg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.header-logo-container {
+  display: none; /* هذا السطر يخفي الدائرة تماماً من الصفحة */
+}
+
+        .header-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Categories Bar (Sticky) */
+        .categories-bar {
+            position: sticky;
+            top: 0;
+            background-color: #FAF8F5;
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 12px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            white-space: nowrap;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .categories-bar::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .cat-btn {
+            background-color: #EFECE6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background-color: var(--bg-color);
+            color: white;
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Food Card */
+        .food-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .food-info {
+            flex: 1;
+            padding-left: 10px;
+            text-align: right;
+        }
+
+        .food-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .food-action-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .food-price-badge {
+            background-color: #6B6E59;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .add-btn {
+            background-color: #222222;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Select Dropdown for Options/Sizes */
+        .size-dropdown {
+            background-color: #6B6E59;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 4px;
+            width: 100%;
+            max-width: 160px;
+        }
+
+        .food-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 12px;
+            object-fit: cover;
+            background-color: #ddd;
+        }
+
+        /* Floating Cart Button */
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #FAF8F5;
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            border: none;
+            cursor: pointer;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .floating-cart-btn span.badge {
+            background-color: #c0392b;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+        }
+
+        /* Modal / Cart Page Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 3000;
+        }
+
+        .modal-content {
+            background-color: #FAF8F5;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 20px;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+
+        /* Order Type Tabs */
+        .order-types {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .order-type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #6B6E59;
+            background: white;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            color: #6B6E59;
+        }
+
+        .order-type-btn.active {
+            background: #6B6E59;
+            color: white;
+        }
+
+        .cart-items-list {
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .location-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .checkout-submit-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-logo-container">
+            <img src="images/logo.png" alt="مشويات الرافدين" onerror="this.style.display='none'">
+        </div>
+        <h1>مشويات الرافدين</h1>
+        <p>أوقات العمل: 12 مساءً إلى 2 صباحاً</p>
+    </header>
+
+    <!-- Categories Sticky Bar -->
+    <div class="categories-bar">
+        <button class="cat-btn active" onclick="filterCategory('grills')">المشويات</button>
+        <button class="cat-btn" onclick="filterCategory('ovens')">صواني الفرن</button>
+        <button class="cat-btn" onclick="filterCategory('appetizers')">المقبلات</button>
+        <button class="cat-btn" onclick="filterCategory('sandwiches')">الساندويتشات</button>
+        <button class="cat-btn" onclick="filterCategory('rice-coal')">الرز والفحم</button>
+        <button class="cat-btn" onclick="filterCategory('drinks')">المشروبات</button>
+    </div>
+
+    <div class="container" id="menu-container">
+        <!-- Dynamic Menu Items populated via JS -->
+    </div>
+
+    <!-- Floating Cart Button -->
+    <button class="floating-cart-btn" onclick="openCartModal()">
+        <span>سلة الطلب</span>
+        <span class="badge" id="cart-badge">0</span>
+    </button>
+
+    <!-- Cart / Checkout Modal -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>سلة الطلب</h2>
+                <button class="close-modal" onclick="closeCartModal()">&times;</button>
+            </div>
+
+            <!-- Order Types -->
+            <div class="order-types">
+                <button class="order-type-btn active" id="type-delivery" onclick="setOrderType('delivery')">توصيل</button>
+                <button class="order-type-btn" id="type-pickup" onclick="setOrderType('pickup')">استلام</button>
+                <button class="order-type-btn" id="type-dinein" onclick="setOrderType('dinein')">محلي</button>
+            </div>
+
+            <div class="cart-items-list" id="cart-items-list">
+                <!-- Items will be listed here -->
+            </div>
+
+            <div id="cart-total-container" style="font-weight: 700; font-size: 16px; margin-bottom: 15px; text-align: left;">
+                المجموع الكلي: <span id="cart-total-price">0</span> ريال
+            </div>
+
+            <!-- Dynamic Inputs based on order type -->
+            <div id="dynamic-fields">
+                <!-- Delivery Fields -->
+                <div id="fields-delivery">
+                    <div class="form-group">
+                        <label>رقم الجوال / العنوان</label>
+                        <input type="text" id="delivery-address" placeholder="أدخل تفاصيل العنوان أو الحي">
+                    </div>
+                    <button class="location-btn" onclick="getLocation()">📍 تحديد موقعي الحالي (GPS)</button>
+                    <p id="location-status" style="font-size: 12px; color: #27ae60; margin-top: 5px;"></p>
+                </div>
+
+                <!-- Pickup / Dinein Fields -->
+                <div id="fields-name-only" style="display: none;">
+                    <div class="form-group">
+                        <label>اسم العميل</label>
+                        <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم">
+                    </div>
+                </div>
+            </div>
+
+            <button class="checkout-submit-btn" onclick="sendToWhatsApp()">إرسال الطلب عبر واتساب</button>
+        </div>
+    </div>
+
+    <script>
+        // Menu Data Structure with Interactive Options/Sizes
+        const menuData = {
+            grills: [
+                { 
+                    name: "كباب لحم", 
+                    img: "iemages/1.jpeg",
+                    options: [
+                        { name: "نفر", price: 35 },
+                        { name: "كيلو", price: 140 }
+                    ]
+                },
+                { 
+                    name: "كباب دجاج", 
+                    img: "iemages/2.jpeg",
+                    options: [
+                        { name: "نفر", price: 28 },
+                        { name: "كيلو", price: 112 }
+                    ]
+                },
+                { 
+                    name: "مشكل لحم", 
+                    img: "iemages/3.jpeg",
+                    options: [
+                        { name: "نفر", price: 35 },
+                        { name: "كيلو", price: 140 }
+                    ]
+                },
+                { 
+                    name: "مشكل دجاج", 
+                    img: "iemages/4.jpeg",
+                    options: [
+                        { name: "نفر", price: 28 },
+                        { name: "كيلو", price: 112 }
+                    ]
+                },
+                { 
+                    name: "مشاوي مشكلة", 
+                    img: "iemages/5.jpeg",
+                    options: [
+                        { name: "نفر", price: 30 },
+                        { name: "كيلو", price: 120 }
+                    ]
+                },
+                { 
+                    name: "اوصال لحم", 
+                    img: "iemages/6.jpeg",
+                    options: [
+                        { name: "نفر", price: 35 },
+                        { name: "كيلو", price: 140 }
+                    ]
+                },
+                { 
+                    name: "ريش", 
+                    img: "iemages/7.jpeg",
+                    options: [
+                        { name: "نفر", price: 40 },
+                        { name: "كيلو", price: 160 }
+                    ]
+                },
+                { 
+                    name: "كباب عراقي", 
+                    img: "iemages/8.jpeg",
+                    options: [
+                        { name: "نفر", price: 35 },
+                        { name: "كيلو", price: 140 }
+                    ]
+                },
+                { 
+                    name: "كباب باذنجان", 
+                    img: "iemages/9.jpeg",
+                    options: [
+                        { name: "نفر", price: 40 },
+                        { name: "كيلو", price: 160 }
+                    ]
+                },
+                { 
+                    name: "طوايه عراقيه", 
+                    img: "iemages/10.jpeg",
+                    options: [
+                        { name: "", price: 35 }
+                    ]
+                },
+                { 
+                    name: "صفيحة لحم", 
+                    img: "iemages/11.jpeg",
+                    options: [
+                        { name: " ", price: 30 }
+                    ]
+                },
+                { 
+                    name: "معلاق مشوي", 
+                    img: "iemages/12.jpeg",
+                    options: [
+                        { name: "نفر", price: 35 },
+                        { name: "كيلو", price: 140 }
+                    ]
+                },
+                { 
+                    name: "عرايس", 
+                    img: "iemages/13.jpeg",
+                    options: [
+                        { name: "نفر", price: 25 },
+                        { name: "كيلو", price: 100 }
+                    ]
+                }
+            ],
+            ovens: [
+                { name: "محمره", img: "iemages/14.jpeg", options: [{ name: " ", price: 15 }] },
+                { name: "اوصال دجاج بالفرن", img: "iemages/15.jpeg", options: [{ name: " ", price: 30 }] },
+                { name: "كفته باللحم", img: "iemages/16.jpeg", options: [{ name: " ", price: 35 }] },
+                { name: "حميس", img: "iemages/17.jpeg", options: [{ name: " ", price: 35 }] },
+                { name: "معلاق فرن", img:"iemages/18.jpeg", options: [{ name: " ", price: 35 }] },
+                { name: "داوود باشا", img:"iemages/19.jpeg", options: [{ name: " ", price: 35 }] },
+                { name: "كفته لحم طحينه", img: "iemages/20.jpeg", options: [{ name: " ", price: 35 }] }
+            ],
+            appetizers: [
+                { 
+                    name: "تبوله", 
+                    img: "iemages/21.jpeg",
+                    options: [
+                        { name: "صغير", price: 10 },
+                        { name: "وسط", price: 15 },
+                        { name: "كبير", price: 20 }
+                    ]
+                },
+                { 
+                    name: "حمص بيروتي", 
+                    img: "iemages/22.jpeg",
+                    options: [
+                        { name: "صغير", price: 13 },
+                        { name: "وسط", price: 18 },
+                        { name: "كبير", price: 23 }
+                    ]
+                },
+                { 
+                    name: "متبل شمندر", 
+                    img: "iemages/23.jpeg",
+                    options: [
+                        { name: "صغير", price: 13 },
+                        { name: "وسط", price: 18 },
+                        { name: "كبير", price: 23 }
+                    ]
+                },
+                { 
+                    name: "حمص", 
+                    img: "iemages/28.jpeg",
+                    options: [
+                        { name: "صغير", price: 10 },
+                        { name: "وسط", price: 15 },
+                        { name: "كبير", price: 20 }
+                    ]
+                },
+                { name: "مقبلات كبير", img: "iemages/29.jpeg", options: [{ name: " ", price: 25 }] },
+                { 
+                    name: "حمص باللحمه", 
+                    img: "iemages/30.jpeg",
+                    options: [
+                        { name: "صغير", price: 20 },
+                        { name: "وسط", price: 25 },
+                        { name: "كبير", price: 30 }
+                    ]
+                },
+                { 
+                    name: "سلطة زيتون", 
+                    img: "iemages/24.jpeg",
+                    options: [
+                        { name: "صغير", price: 10 },
+                        { name: "وسط", price: 15 },
+                        { name: "كبير", price: 20 }
+                    ]
+                },
+                { 
+                    name: "ورق عنب", 
+                    img: "iemages/25.jpeg",
+                    options: [
+                        { name: "صغير", price: 10 },
+                        { name: "وسط", price: 15 },
+                        { name: "كبير", price: 20 }
+                    ]
+                },
+                { 
+                    name: "خيار لبن", 
+                    img: "iemages/26.jpeg",
+                    options: [
+                        { name: "صغير", price: 10 },
+                        { name: "وسط", price: 15 },
+                        { name: "كبير", price: 20 }
+                    ]
+                },
+                { 
+                    name: "فتوش", 
+                    img: "iemages/27.jpeg",
+                    options: [
+                        { name: "صغير", price: 10 },
+                        { name: "وسط", price: 15 },
+                        { name: "كبير", price: 20 }
+                    ]
+                }
+            ],
+            sandwiches: [
+                { 
+                    name: "كباب لحم", 
+                    img: "iemages/31.jpeg",
+                    options: [
+                        { name: "صغيرة", price: 8 },
+                        { name: "صاروخ", price: 15 },
+                          { name: "صغيرة مع حمص", price: 9},
+                            { name: "صاروخ مع حمص", price: 16}
+                    ]
+                },
+                { 
+                    name: "اوصال لحم", 
+                    img: "iemages/31.jpeg",
+                    options: [
+                        { name: "صغيرة", price: 8 },
+                        { name: "صاروخ", price: 15 },
+                        { name: "صغيرة مع حمص", price: 9},
+                          { name: "صاروخ مع حمص", price: 16}
+                    ]
+                },
+                { 
+                    name: "كباب دجاج", 
+                    img: "iemages/32.jpeg",
+                    options: [
+                        { name: "صغيرة", price: 7 },
+                        { name: "صاروخ", price: 12 },
+                          { name: "صغيرة مع حمص", price: 8 },
+                            { name: "صاروخ مع حمص", price: 13}
+                    ]
+                },
+                { 
+                    name: "اوصال دجاج", 
+                    img: "iemages/32.jpeg",
+                    options: [
+                        { name: "صغيرة", price: 7 },
+                        { name: "صاروخ", price: 12 },
+                          { name: "صغيرة مع حمص", price: 8 },
+                           { name: "صاروخ مع حمص", price: 13}
+                    ]
+                }
+            ],
+            "rice-coal": [
+                { 
+                    name: "فحم ساده", 
+                    
+                    options: [
+                        { name: "عادي", price: 15 },
+                        { name: "كبير", price: 30 }
+                    ]
+                },
+                { 
+                    name: "فحم مع رز", 
+                    img: "iemages/33.jpeg",
+                    options: [
+                        { name: "ربع", price: 12 },
+                        { name: "نص", price: 20 },
+                        { name: "كامل", price: 40 }
+                    ]
+                },
+                { 
+                    name: "اوصال عظم مع رز", 
+                    img: "iemages/34.jpeg",
+                    options: [
+                        { name: " ", price: 25 },
+                        { name: " ", price: 50 }
+                    ]
+                },
+                { 
+                    name: "مضغوط", 
+                    img: "images/madghout.png",
+                    options: [
+                        { name: " ", price: 20 },
+                        { name: " ", price: 40 }
+                    ]
+                },
+                { name: "رز", img: "images/rice.png", options: [{ name: " ", price: 8 }] }
+            ],
+            drinks: [
+                { 
+                    name: "بيبسي", 
+                    img: "images/pepsi.png",
+                    options: [
+                        { name: "صغير", price: 3 },
+                        { name: "وسط", price: 5 },
+                        { name: "كبير", price: 10 },
+                        { name: "دايت", price: 3 }
+                    ]
+                },
+                { 
+                    name: "حمضيات", 
+                    img: "images/hamidiyat.png",
+                    options: [
+                        { name: "صغير", price: 3 },
+                        { name: "وسط", price: 5 },
+                        { name: "كبير", price: 10 }
+                    ]
+                },
+                { 
+                    name: "سفن", 
+                    img: "images/7up.png",
+                    options: [
+                        { name: "صغير", price: 3 },
+                        { name: "دايت", price: 3 }
+                    ]
+                },
+                { name: "ربيع", img: "images/rabee.png", options: [{ name: " ", price: 2 }] }
+            ]
+        };
+
+        let cart = [];
+        let currentOrderType = 'delivery';
+        let userLocationCoords = '';
+
+        function renderMenu(categoryKey) {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+            
+            const items = menuData[categoryKey] || [];
+            items.forEach((item, itemIndex) => {
+                const card = document.createElement('div');
+                card.className = 'food-card';
+
+                let optionsHtml = '';
+                if (item.options && item.options.length > 1) {
+                    optionsHtml = `<select class="size-dropdown" id="select-${categoryKey}-${itemIndex}" onchange="updatePrice('${categoryKey}', ${itemIndex})">`;
+                    item.options.forEach((opt, optIndex) => {
+                        optionsHtml += `<option value="${optIndex}">${opt.name} - ${opt.price} ريال</option>`;
+                    });
+                    optionsHtml += `</select>`;
+                } else if (item.options && item.options.length === 1) {
+                    optionsHtml = `<div style="font-size:12px; color:#6B6E59; font-weight:700; margin-bottom:4px;">${item.options[0].name}</div>`;
+                }
+
+                const initialPrice = item.options ? item.options[0].price : 0;
+
+                card.innerHTML = `
+                    <div class="food-info">
+                        <div class="food-name">${item.name}</div>
+                        ${optionsHtml}
+                        <div class="food-action-row">
+                            <button class="add-btn" onclick="addSelectedItemToCart('${categoryKey}', ${itemIndex})">+</button>
+                            <div class="food-price-badge" id="price-${categoryKey}-${itemIndex}">${initialPrice} ريال</div>
+                        </div>
+                    </div>
+                    <img src="${item.img}" class="food-img" onerror="this.style.display='none'">
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updatePrice(categoryKey, itemIndex) {
+            const selectElement = document.getElementById(`select-${categoryKey}-${itemIndex}`);
+            const selectedOptIndex = selectElement.value;
+            const item = menuData[categoryKey][itemIndex];
+            const selectedPrice = item.options[selectedOptIndex].price;
+            document.getElementById(`price-${categoryKey}-${itemIndex}`).innerText = selectedPrice + ' ريال';
+        }
+
+        function addSelectedItemToCart(categoryKey, itemIndex) {
+            const item = menuData[categoryKey][itemIndex];
+            let selectedSizeName = '';
+            let selectedPrice = 0;
+
+            if (item.options && item.options.length > 1) {
+                const selectElement = document.getElementById(`select-${categoryKey}-${itemIndex}`);
+                const selectedOptIndex = selectElement.value;
+                selectedSizeName = item.options[selectedOptIndex].name;
+                selectedPrice = item.options[selectedOptIndex].price;
+            } else {
+                selectedSizeName = item.options[0].name !== ' ' ? item.options[0].name : '';
+                selectedPrice = item.options[0].price;
+            }
+
+            const cartItemName = selectedSizeName ? `${item.name} (${selectedSizeName})` : item.name;
+
+            const existing = cart.find(i => i.name === cartItemName);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ name: cartItemName, price: selectedPrice, qty: 1 });
+            }
+            updateCartBadge();
+        }
+
+        function filterCategory(categoryKey) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderMenu(categoryKey);
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cart-badge').innerText = totalQty;
+        }
+
+        function openCartModal() {
+            document.getElementById('cart-modal').style.display = 'flex';
+            renderCartItems();
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function renderCartItems() {
+            const listContainer = document.getElementById('cart-items-list');
+            listContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color:#777;">السلة فارغة حالياً</p>';
+                document.getElementById('cart-total-price').innerText = '0';
+                return;
+            }
+
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.innerHTML = `
+                    <span>${item.name} (${item.qty})</span>
+                    <span>${item.price * item.qty} ريال</span>
+                    <button onclick="removeFromCart(${index})" style="background:#c0392b; color:white; border:none; padding:2px 8px; border-radius:4px; cursor:pointer;">حذف</button>
+                `;
+                listContainer.appendChild(row);
+            });
+
+            if (currentOrderType === 'delivery') {
+                total += 10;
+            }
+
+            document.getElementById('cart-total-price').innerText = total;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            renderCartItems();
+        }
+
+        function setOrderType(type) {
+            currentOrderType = type;
+            document.querySelectorAll('.order-type-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('type-' + type).classList.add('active');
+
+            if (type === 'delivery') {
+                document.getElementById('fields-delivery').style.display = 'block';
+                document.getElementById('fields-name-only').style.display = 'none';
+            } else {
+                document.getElementById('fields-delivery').style.display = 'none';
+                document.getElementById('fields-name-only').style.display = 'block';
+            }
+            renderCartItems();
+        }
+
+        function getLocation() {
+            const status = document.getElementById('location-status');
+            if (!navigator.geolocation) {
+                status.innerText = 'المتصفح لا يدعم تحديد الموقع';
+                return;
+            }
+            status.innerText = 'جاري تحديد الموقع...';
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                userLocationCoords = `https://maps.google.com/?q=${lat},${lon}`;
+                status.innerText = 'تم تحديد موقعك بنجاح!';
+            }, () => {
+                status.innerText = 'فشل تحديد الموقع، يرجى إدخال العنوان يدوياً';
+            });
+        }
+
+        function sendToWhatsApp() {
+            if (cart.length === 0) {
+                alert('السلة فارغة!');
+                return;
+            }
+
+            let orderText = `طلب جديد من مشويات الرافدين:\n*نوع الطلب:* ${currentOrderType === 'delivery' ? 'توصيل' : currentOrderType === 'pickup' ? 'استلام' : 'محلي'}\n\n*الأصناف:*\n`;
+            cart.forEach(item => {
+                orderText += `- ${item.name} (${item.qty}) : ${item.price * item.qty} ريال\n`;
+            });
+
+            let total = parseInt(document.getElementById('cart-total-price').innerText);
+            orderText += `\n*المجموع الكلي:* ${total} ريال\n`;
+
+            if (currentOrderType === 'delivery') {
+                const address = document.getElementById('delivery-address').value;
+                orderText += `*العنوان:* ${address}\n`;
+                if (userLocationCoords) {
+                    orderText += `*رابط الموقع (GPS):* ${userLocationCoords}\n`;
+                }
+            } else {
+                const name = document.getElementById('customer-name').value;
+                orderText += `*اسم العميل:* ${name}\n`;
+            }
+
+            const encodedText = encodeURIComponent(orderText);
+            const whatsappUrl = `https://wa.me/966500000000?text=${encodedText}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Initialize default view
+        renderMenu('grills');
+    </script>
+</body>
+</html>
